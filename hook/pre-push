@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Script to run on a `pre-push` githook to check if a tag is being pushed
+# If so, it runs the release.m script.
+# This must be run on a Linux system with Matlab installed.
+
+remote="$1"
+url="$2"
+
+z40=0000000000000000000000000000000000000000
+
+while read local_ref local_sha remote_ref remote_sha
+do
+    if [[ $remote_ref == *"refs/tags"* ]] && [[ $local_ref == $remote_ref ]]
+    then 
+        echo Preparing draft release
+        # pre-push hooks always run in the repo root folder
+        matlab -nodisplay -r "disp(release('upload')); exit"
+    fi
+done
+
+exit 0
